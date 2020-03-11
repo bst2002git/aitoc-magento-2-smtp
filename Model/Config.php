@@ -305,7 +305,7 @@ class Config
      * @return bool
      */
     public function plainEnabled()
-    {
+    {		error_log('plainEnabled= '.print_r($this->config->getModuleConfig(self::XML_PATH_TEMPLATE_EMAILS . 'plain', $this->getCurrentStoreId()),true)."\n",3,'./tmp/error_log.log');
         return  (bool)$this->config->getModuleConfig(self::XML_PATH_TEMPLATE_EMAILS . 'plain', $this->getCurrentStoreId());
     }
 

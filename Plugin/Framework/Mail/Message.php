@@ -16,6 +16,7 @@ class Message
         \Aitoc\Smtp\Model\Config $config
     ) {
         $this->config = $config;
+				error_log(__FILE__.'__construct = '."\n",3,'./tmp/error_log.log');
     }
 
     /**
@@ -24,10 +25,11 @@ class Message
      */
     public function afterSetBody(MailMessage $subject)
     {
+		error_log('afterSetBody= '."\n",3,'./tmp/error_log.log');
         if (!$this->config->plainEnabled()) {
             return $subject;
         }
-
+				error_log('afterSetBody after plainEnabled()= '."\n",3,'./tmp/error_log.log');
         try {
             $body = $subject->getBody();
             if ($body instanceof \Zend\Mime\Message && !$body->isMultiPart()) {
@@ -39,6 +41,7 @@ class Message
                 $plainContent = '';
                 try {
                     $plainContent = Html2Text::convert($zendMessage->getBodyText());
+										error_log('afterSetBody plainContent= '.print_r($plainContent,true)."\n",3,'./tmp/error_log.log');
                 } catch (\Exception $e) {
                 }
 
@@ -54,4 +57,13 @@ class Message
 
         return $subject;
     }
+
+		public function afterSetBodyText(MailMessage $subject)
+		{
+			error_log('afterSetBodyText= '."\n",3,'./tmp/error_log.log');
+		}
+		public function afterSetBodyHtml(MailMessage $subject)
+		{
+			error_log('afterSetBodyHtml= '."\n",3,'./tmp/error_log.log');
+		}
 }

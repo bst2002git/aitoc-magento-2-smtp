@@ -67,8 +67,21 @@ class Sender
         $vars[LogInterface::EMAIL_BODY] = $data[LogInterface::EMAIL_BODY];
         $vars[LogInterface::SUBJECT] = $data[LogInterface::SUBJECT];
 
+				error_log('Sender.php data= '.print_r($data[LogInterface::RECIPIENT_EMAIL],true)."\n",3,'./tmp/error_log.log');
+
+				error_log('Sender.php addTo(prepareEmailsData= '.print_r($this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL]),true)."\n",3,'./tmp/error_log.log');
+				/*
+				https://github.com/magepal/magento2-gmail-smtp-app/issues/152
+				https://github.com/magento/magento2/pull/24906
+				// use iconv for valid name
+            $name = iconv('UTF-8', 'ASCII//TRANSLIT', $address->getName());
+				*/
+				$data[LogInterface::RECIPIENT_EMAIL]= iconv('UTF-8', 'ASCII//TRANSLIT', $data[LogInterface::RECIPIENT_EMAIL]);
+				error_log('Sender.php data utf8= '.print_r($data[LogInterface::RECIPIENT_EMAIL],true)."\n",3,'./tmp/error_log.log');
+				error_log('Sender.php data email= '.print_r($this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL])[0]['email'],true)."\n",3,'./tmp/error_log.log');
         $this->transportBuilder
-            ->addTo($this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL]))
+            //->addTo($this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL]))
+            ->addTo($this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL])[0]['email'],$this->prepareEmailsData($data[LogInterface::RECIPIENT_EMAIL])[0]['name'])
             ->setFrom($this->prepareEmailsData($data[LogInterface::SENDER_EMAIL], true));
 
         if ($data[LogInterface::BCC]) {
@@ -125,8 +138,10 @@ class Sender
                 ];
             }
         }
-
-        return $this->config->getAddressList($emailsConverted);
+				error_log('Sender.php prepareEmailsData= '.print_r($emailsConverted,true)."\n",3,'./tmp/error_log.log');
+				error_log('Sender.php prepareEmailsData return = '.print_r($this->config->getAddressList($emailsConverted),true)."\n",3,'./tmp/error_log.log');
+        //return $this->config->getAddressList($emailsConverted);
+        return $emailsConverted;
     }
 
     /**

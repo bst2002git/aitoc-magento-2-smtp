@@ -39,7 +39,7 @@ class Resend extends \Aitoc\Smtp\Controller\Adminhtml\Log
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(__(self::DEFAULT_ERROR_MESSAGE));
+                $this->messageManager->addErrorMessage(__(self::DEFAULT_ERROR_MESSAGE).$e->getMessage());
             }
         } else {
             $this->messageManager->addErrorMessage(__('Unable to find the rule'));

@@ -89,6 +89,7 @@ class Transport implements \Magento\Framework\Mail\TransportInterface
 
         $this->message = $message;
         $this->setFrom();
+				error_log(__FILE__.'__construct = '."\n",3,'./tmp/error_log.log');
     }
 
     /**
@@ -152,18 +153,19 @@ class Transport implements \Magento\Framework\Mail\TransportInterface
      * @inheritdoc
      */
     public function sendMessage()
-    {
+    {		error_log('model/Transport.php sendMessage() = '."\n",3,'./tmp/error_log.log');
         $logDisabled = $this->registry->registry(RegistryConstants::CURRENT_RULE) ? true : false;
 
         try {
             $this->message = $this->aitConfig->prepareMessageToSend($this->getMessage());
 
             if ($this->aitConfig->isNewSender(RegistryConstants::VERSION_COMPARISON_OLD_MAIL)) {
+								error_log('model/Transport.php isNewSender() = '."\n",3,'./tmp/error_log.log');
                 $message = ZendMessage::fromString($this->message->getRawMessage());
             } else {
                 $message = $this->message;
             }
-
+						error_log('model/Transport.php $this->message->getRawMessage() = '.print_r($this->message->getRawMessage(),true)."\n",3,'./tmp/error_log.log');
             if ($this->aitConfig->isBlockedDelivery()) {
                 $modifiedRecipient = $this->modifyTo();
 
@@ -260,15 +262,20 @@ class Transport implements \Magento\Framework\Mail\TransportInterface
     public function testSend($to)
     {
         try {
+						error_log('testSend  first = '."\n",3,'./tmp/error_log.log');
+
             $result = false;
             $this->message = $this->aitConfig->prepareMessageToSend($this->getMessage(), true);
             $this->message
                 ->addTo($to)
                 ->setSubject(self::TEST_MESSAGE_SUBJECT)
                 ->setBodyText(__(self::TEST_MESSAGE_BODY));
+					  error_log('testSend  before isNewSender()= '."\n",3,'./tmp/error_log.log');
 
             if ($this->aitConfig->isNewSender(RegistryConstants::VERSION_COMPARISON_OLD_MAIL)) {
+						error_log('testSend  before ZendMessage::fromString()= '."\n",3,'./tmp/error_log.log');
                 $message = ZendMessage::fromString($this->message->getRawMessage());
+								error_log('testSend isNewSender()= '."\n",3,'./tmp/error_log.log');
             } else {
                 $message = $this->message;
             }
